@@ -1,0 +1,31 @@
+{
+  "name": "ICG-WebGL2",
+  "version": "1.0.0",
+  "description": "交互式计算机图形学——基于WebGL的自顶向下方法",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "chapter02": "webpack --watch --mode=development --env=chapter02",
+    "build": "webpack --mode=development"
+  },
+  "dependencies": {
+    "@types/gl-matrix": "^2.4.5",
+    "copy-webpack-plugin": "^5.0.3",
+    "gl-matrix": "^3.0.0",
+    "three": "^0.106.2"
+  },
+  "devDependencies": {
+    "@babel/core": "7.2.2",
+    "awesome-typescript-loader": "^5.2.1",
+    "babel-loader": "8.0.5",
+    "cross-env": "^5.2.0",
+    "file-loader": "^3.0.1",
+    "glsl-shader-loader": "^0.1.6",
+    "source-map-loader": "^0.2.4",
+    "tslint": "5.12.1",
+    "tslint-config-airbnb": "5.11.1",
+    "typescript": "^3.5",
+    "webpack": "4.28.4",
+    "webpack-cli": "^3.2.1"
+  }
+}
