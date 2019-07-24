@@ -1,57 +1,31 @@
 import { vec3, vec4 } from 'gl-matrix';
 
-export function create3DContext(canvas, opt_attribs) {
-  const names = ['webgl', 'experimental-webgl', 'webkit-3d', 'moz-webgl'];
-  let context = null;
-  for (let ii = 0; ii < names.length; ++ii) {
-    try {
-      context = canvas.getContext(names[ii], opt_attribs);
-    } catch (e) {
-      // no-empty
-    }
-    if (context) {
-      break;
-    }
-  }
+export function create3DContext(canvas: HTMLCanvasElement, opt_attribs?: Object): WebGLRenderingContext {
+  let context: WebGLRenderingContext;
+  context = canvas.getContext('webgl', opt_attribs) as WebGLRenderingContext;
   return context;
 }
 
-export function setupWebGL(canvas, opt_attribs) {
+export function initWebGL(canvas: HTMLCanvasElement, opt_attribs?: Object): WebGLRenderingContext {
   const context = create3DContext(canvas, opt_attribs);
   return context;
 }
 
-export function createProgram(gl, vertex, fragment) {
-  const vertShdr = gl.createShader(gl.VERTEX_SHADER);
+export function createProgram(gl: WebGLRenderingContext, vertex: string, fragment: string): WebGLProgram {
+  // vertex shader
+  const vertShdr = gl.createShader(gl.VERTEX_SHADER) as WebGLShader;
   gl.shaderSource(vertShdr, vertex);
   gl.compileShader(vertShdr);
 
-  if (!gl.getShaderParameter(vertShdr, gl.COMPILE_STATUS)) {
-    const msg = `Vertex shader failed to compile.  The error log is:${gl.getShaderInfoLog(vertShdr)}`;
-    console.error(msg);
-    return -1;
-  }
-
-  const fragShdr = gl.createShader(gl.FRAGMENT_SHADER);
+  // fragment shader
+  const fragShdr = gl.createShader(gl.FRAGMENT_SHADER) as WebGLShader;
   gl.shaderSource(fragShdr, fragment);
   gl.compileShader(fragShdr);
 
-  if (!gl.getShaderParameter(fragShdr, gl.COMPILE_STATUS)) {
-    const msg = `Fragment shader failed to compile.  The error log is:${gl.getShaderInfoLog(fragShdr)}`;
-    console.error(msg);
-    return -1;
-  }
-
-  const program = gl.createProgram();
+  const program = gl.createProgram() as WebGLProgram;
   gl.attachShader(program, vertShdr);
   gl.attachShader(program, fragShdr);
   gl.linkProgram(program);
-
-  if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
-    const msg = `Shader program failed to link.  The error log is:${gl.getProgramInfoLog(program)}`;
-    console.error(msg);
-    return -1;
-  }
 
   return program;
 }

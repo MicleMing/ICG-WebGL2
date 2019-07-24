@@ -5,6 +5,7 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
+    "chapter01": "webpack --watch --mode=development --env=chapter01",
     "chapter02": "webpack --watch --mode=development --env=chapter02",
     "build": "webpack --mode=development"
   },

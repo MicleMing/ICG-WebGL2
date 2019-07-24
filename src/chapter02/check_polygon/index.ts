@@ -1,4 +1,4 @@
-import { createProgram, setupWebGL, parseColor } from '../../shared';
+import { createProgram, initWebGL, parseColor } from '../../shared';
 import { vec2, vec3 } from 'gl-matrix';
 
 import vertexShader from './shader.vert';
@@ -108,7 +108,7 @@ function init() {
   const canvas = document.getElementById('gl-canvas') as HTMLCanvasElement;
   const { width, height } = canvas;
 
-  gl = setupWebGL(canvas, {});
+  gl = initWebGL(canvas, {});
 
   if (!gl) {
     console.error('WebGL isn\'t available');
