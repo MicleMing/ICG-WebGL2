@@ -11,12 +11,20 @@ module.exports = env => {
     return acc;
   }, {});
 
-  const copyHtml = childDirs.reduce((acc, dir) => {
-    const from = path.join(targetDir, dir, 'index.html');
-    const to = dir;
-    acc = acc.concat({ from, to });
-    return acc;
-  }, []);
+
+  const copyAssets = (acessets, target = '') => {
+    return childDirs.reduce((acc, dir) => {
+      const from = path.join(targetDir, dir, acessets);
+      const to = path.join(dir, target);
+      acc = acc.concat({ from, to });
+      return acc;
+    }, []);
+  }
+
+  const copyHtml = copyAssets('index.html');
+  const copyImages = copyAssets('images', 'images');
+
+
 
   console.log(copyHtml)
   return {
@@ -47,7 +55,7 @@ module.exports = env => {
       ]
     },
     plugins: [
-      new CopyPlugin(copyHtml),
+      new CopyPlugin(copyHtml.concat(copyImages)),
     ],
   }
 };

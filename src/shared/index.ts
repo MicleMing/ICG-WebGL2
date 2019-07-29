@@ -16,16 +16,33 @@ export function createProgram(gl: WebGLRenderingContext, vertex: string, fragmen
   const vertShdr = gl.createShader(gl.VERTEX_SHADER) as WebGLShader;
   gl.shaderSource(vertShdr, vertex);
   gl.compileShader(vertShdr);
+  if (!gl.getShaderParameter(vertShdr, gl.COMPILE_STATUS)) {
+    const msg = `Vertex shader failed to compile.  The error log is:${gl.getShaderInfoLog(vertShdr)}`;
+    console.error(msg);
+    return -1;
+  }
 
   // fragment shader
   const fragShdr = gl.createShader(gl.FRAGMENT_SHADER) as WebGLShader;
   gl.shaderSource(fragShdr, fragment);
   gl.compileShader(fragShdr);
 
+  if (!gl.getShaderParameter(fragShdr, gl.COMPILE_STATUS)) {
+    const msg = `Fragment shader failed to compile.  The error log is:${gl.getShaderInfoLog(fragShdr)}`;
+    console.error(msg);
+    return -1;
+  }
+
   const program = gl.createProgram() as WebGLProgram;
   gl.attachShader(program, vertShdr);
   gl.attachShader(program, fragShdr);
   gl.linkProgram(program);
+
+  if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
+    const msg = `Shader program failed to link.  The error log is:${gl.getProgramInfoLog(program)}`;
+    console.error(msg);
+    return -1;
+  }
 
   return program;
 }
