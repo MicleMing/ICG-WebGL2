@@ -1,7 +1,16 @@
 import { initWebGL, createProgram } from '../../shared';
+import kernels, { IKenel } from './kernels';
 
 import vertexShader from './shader.vert';
 import fragmentShader from './shader.frag';
+import kenels from './kernels';
+
+function computeKernelWeight(kernel: number[]): number {
+  const weight = kernel.reduce((prev, curr) => {
+    return prev + curr;
+  });
+  return weight <= 0 ? 1 : weight;
+}
 
 type ImageVertex = {
   x: number;
@@ -13,6 +22,7 @@ type ImageVertex = {
 class ImageProcessor {
   gl: WebGLRenderingContext;
   program: WebGLProgram;
+  uniforms: { [key: string]: WebGLUniformLocation | null }
 
   constructor() {
     const canvas = document.getElementById('gl-canvas') as HTMLCanvasElement;
@@ -45,10 +55,60 @@ class ImageProcessor {
     ]), gl.STATIC_DRAW);
   }
 
-  processPosition(program: WebGLProgram, imageVertex: ImageVertex) {
+  // TODO
+  createTextureFrameBuffers(
+    gl: WebGLRenderingContext,
+    kernels: IKenel[],
+    image: HTMLImageElement
+  ) {
+    const textures: WebGLTexture[] = [];
+    const fBuffers: WebGLFramebuffer[] = [];
+    kernels.forEach((kernel) => {
+      const texture = this.createTexture(gl);
+      textures.push(texture);
+      gl.texImage2D(
+        gl.TEXTURE_2D, 0, gl.RGBA, image.width, image.height, 0,
+        gl.RGBA, gl.UNSIGNED_BYTE, null);
+      const buffer = gl.createFramebuffer() as WebGLFramebuffer;
+      fBuffers.push(buffer);
+      gl.bindFramebuffer(gl.FRAMEBUFFER, buffer);
+      gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, texture, 0);
+    });
+  }
+
+  applyKernel(kernel: IKenel) {
+    const gl = this.gl;
+    const uniforms = this.uniforms;
+    const kernelVec = kernels[kernel];
+    gl.uniform1fv(uniforms.kernelLocation, kernelVec);
+    gl.uniform1f(uniforms.kernelWeightLocation, computeKernelWeight(kernelVec));
+    gl.drawArrays(gl.TRIANGLES, 0, 6);
+  }
+
+  createTexture(gl: WebGLRenderingContext): WebGLTexture {
+    // create texture
+    const texture = gl.createTexture() as WebGLTexture;
+    gl.bindTexture(gl.TEXTURE_2D, texture);
+
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+
+    return texture;
+  }
+
+  processPosition(program: WebGLProgram, image: HTMLImageElement) {
     const gl = this.gl;
     const positionLocation = gl.getAttribLocation(program, 'a_position');
     const positionBuffer = gl.createBuffer();
+    const imageVertex: ImageVertex = {
+      x: 0,
+      y: 0,
+      width: image.width,
+      height: image.height,
+    };
+
     gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
 
     this.setRectangle(gl, imageVertex);
@@ -72,16 +132,31 @@ class ImageProcessor {
     gl.bufferData(gl.ARRAY_BUFFER, textureCoord, gl.STATIC_DRAW);
     gl.enableVertexAttribArray(texCoordLocation)
     gl.vertexAttribPointer(texCoordLocation, 2, gl.FLOAT, false, 0, 0);
-
-    // create texture
-    const texture = gl.createTexture();
-    gl.bindTexture(gl.TEXTURE_2D, texture);
   }
 
-  processCoord(program: WebGLProgram) {
+  processUniform(program: WebGLProgram, image: HTMLImageElement) {
     const gl = this.gl;
     const resolutionLocation = gl.getUniformLocation(program, "u_resolution");
     gl.uniform2f(resolutionLocation, gl.canvas.width, gl.canvas.height);
+
+    const textureSizeLocation = gl.getUniformLocation(program, "u_textureSize");
+    gl.uniform2f(textureSizeLocation, image.width, image.height);
+
+    const kernelLocation = gl.getUniformLocation(program, "u_kernel");
+    const kernelWeightLocation = gl.getUniformLocation(program, "u_kernelWeight");
+    gl.uniform1fv(kernelLocation, kenels['normal']);
+    gl.uniform1f(kernelWeightLocation, computeKernelWeight(kenels['normal']));
+
+    const flipYLocation = gl.getUniformLocation(program, "u_flipY");
+    gl.uniform1f(flipYLocation, -1);
+
+    return {
+      resolutionLocation,
+      textureSizeLocation,
+      kernelLocation,
+      kernelWeightLocation,
+      flipYLocation,
+    }
   }
 
   render(image: HTMLImageElement) {
@@ -89,15 +164,11 @@ class ImageProcessor {
     const program = this.program;
     gl.useProgram(program);
 
-    this.processPosition(program, { x: 0, y: 0, width: image.width, height: image.height });
+    this.processPosition(program, image);
     this.processTexture(program);
-    this.processCoord(program);
+    this.uniforms = this.processUniform(program, image);
 
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
-
+    this.createTexture(gl);
     gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);
 
 
@@ -109,9 +180,14 @@ class ImageProcessor {
     const offset = 0;
     const count = 6;
     gl.drawArrays(primitiveType, offset, count);
+
+    this.applyKernel('edgeDetect');
+    this.applyKernel('emboss');
   }
 }
 
 const imageProcessor = new ImageProcessor();
 
 imageProcessor.loadImage('http://127.0.0.1:5500/dist/image-processor/images/foo.png');
+
+(window as any).imageProcessor = imageProcessor;
