@@ -15,8 +15,10 @@ module.exports = env => {
   const copyAssets = (acessets, target = '') => {
     return childDirs.reduce((acc, dir) => {
       const from = path.join(targetDir, dir, acessets);
-      const to = path.join(dir, target);
-      acc = acc.concat({ from, to });
+      if (fs.existsSync(from)) {
+        const to = path.join(dir, target);
+        acc = acc.concat({ from, to });
+      }
       return acc;
     }, []);
   }
