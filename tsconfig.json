@@ -10,10 +10,10 @@
       "es2017",
       "dom"
     ],
+    "jsx": "react",
     "sourceMap": true,
     "allowJs": false,
     "moduleResolution": "node",
-    "baseUrl": "src",
     "forceConsistentCasingInFileNames": true,
     "noImplicitReturns": true,
     "noImplicitThis": true,
@@ -25,11 +25,13 @@
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
     "resolveJsonModule": true,
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "skipLibCheck": true
   },
   "include": [
     "src/**/*",
-    "typings/**/*"
+    "typings/**/*",
+    "ui/**/*"
   ],
   "exclude": [
     "node_modules"
