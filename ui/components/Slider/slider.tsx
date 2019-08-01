@@ -50,14 +50,17 @@ ValueLabelComponent.propTypes = {
 
 interface SliderProps {
   title: string;
-  disabled: boolean;
+  disabled?: boolean;
+  show: boolean;
   onChange: (event: Object, value: any) => void;
 }
 
 export default function CustomizedSlider(props: SliderProps) {
-  const { title, onChange, disabled } = props;
+  const { title, onChange, disabled, show } = props;
   const classes = useStyles();
-
+  if (!show) {
+    return null;
+  }
   return (
     <Grid className={classes.root}>
       <Typography gutterBottom>{title}</Typography>

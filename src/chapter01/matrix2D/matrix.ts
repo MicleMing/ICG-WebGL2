@@ -20,7 +20,7 @@ export function rotation(angle: number) {
     c, -s, 0,
     s, c, 0,
     0, 0, 1
-  )
+  );
 }
 
 export function scaling(sx: number, sy: number) {

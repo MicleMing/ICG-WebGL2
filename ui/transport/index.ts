@@ -14,7 +14,8 @@ export enum IEvents {
 }
 
 export enum SETTINGS {
-  matrix2d = 'matrix2d'
+  matrix2d = 'matrix2d',
+  matrix3d = 'matrix3d',
 }
 
 interface IData {

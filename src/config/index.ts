@@ -1,17 +1,22 @@
 import transport, { IEvents, SETTINGS } from '../../ui/transport';
 
 
-const uiIframe = <HTMLIFrameElement>document.querySelector("iframe")
+const uiIframe = <HTMLIFrameElement>document.querySelector("iframe");
 
-uiIframe.addEventListener("load", function () {
-  transport.setPort((uiIframe as any).contentWindow);
-  transport.send({
-    type: IEvents.setting,
-    data: SETTINGS.matrix2d
+const ConfigPanel = (setting: SETTINGS) => {
+  uiIframe.addEventListener("load", function () {
+    transport.setPort((uiIframe as any).contentWindow);
+    transport.send({
+      type: IEvents.setting,
+      data: setting
+    });
   });
-});
+}
+
+ConfigPanel.__S__ = SETTINGS;
 
 export {
   transport,
-  IEvents
+  IEvents,
+  ConfigPanel
 };
