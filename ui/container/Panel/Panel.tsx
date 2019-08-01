@@ -98,13 +98,13 @@ class Panel extends Component<PanelProps, PanelState> {
           <Slider title="x" onChange={this.createChange('x')} show={setting.x} />
           <Slider title="y" onChange={this.createChange('y')} show={setting.y} />
           <Slider title="z" onChange={this.createChange('z')} show={setting.z} />
-          <Slider title="sx" onChange={this.createChange('sx')} show={setting.sx} />
-          <Slider title="sy" onChange={this.createChange('sy')} show={setting.sy} />
-          <Slider title="sz" onChange={this.createChange('sz')} show={setting.sz} />
+          <Slider title="scaleX" onChange={this.createChange('sx')} show={setting.sx} />
+          <Slider title="scaleY" onChange={this.createChange('sy')} show={setting.sy} />
+          <Slider title="scaleZ" onChange={this.createChange('sz')} show={setting.sz} />
           <Slider title="angle" onChange={this.createChange('angle')} show={setting.angle} />
-          <Slider title="anglex" onChange={this.createChange('anglex')} show={setting.anglex} />
-          <Slider title="angley" onChange={this.createChange('angley')} show={setting.angley} />
-          <Slider title="anglez" onChange={this.createChange('anglez')} show={setting.anglez} />
+          <Slider title="angleX" onChange={this.createChange('anglex')} show={setting.anglex} />
+          <Slider title="angleY" onChange={this.createChange('angley')} show={setting.angley} />
+          <Slider title="angleZ" onChange={this.createChange('anglez')} show={setting.anglez} />
         </Grid>
       </Grid>
     );

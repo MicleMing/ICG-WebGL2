@@ -33,9 +33,16 @@ class Matrix3D {
   vertexLocations(program: WebGLProgram): Locations {
     const gl = this.gl;
     const positionLocation = gl.getAttribLocation(program, 'a_position');
-    const colorLocation = gl.getUniformLocation(program, 'u_color');
+    const colorLocation = gl.getAttribLocation(program, 'a_color');
     const matrixLocation = gl.getUniformLocation(program, 'u_matrix');
-    const color = [Math.random(), Math.random(), Math.random(), 1];
+
+    const colorBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
+    gl.bufferData(gl.ARRAY_BUFFER, this.gm.getColor(), gl.STATIC_DRAW);
+    gl.vertexAttribPointer(colorLocation, 3, gl.UNSIGNED_BYTE, true, 0, 0);
+    gl.enableVertexAttribArray(colorLocation);
+
+
 
     const positionBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
@@ -43,7 +50,6 @@ class Matrix3D {
     gl.enableVertexAttribArray(positionLocation);
 
     gl.uniformMatrix4fv(matrixLocation, false, m.identify());
-    gl.uniform4fv(colorLocation, color);
 
     return {
       positionLocation,
@@ -57,7 +63,11 @@ class Matrix3D {
     gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
     gl.clear(gl.COLOR_BUFFER_BIT);
     this.gm.shapeF();
-    gl.drawArrays(this.gl.TRIANGLES, 0, 18);
+
+    const offset = 0;
+    const count = 16 * 6;
+
+    gl.drawArrays(this.gl.TRIANGLES, offset, count);
   }
 
   transform(
@@ -93,17 +103,16 @@ class Matrix3D {
   }
 }
 
-const matrix2d = new Matrix3D();
+const matrix3d = new Matrix3D();
 
 ConfigPanel(ConfigPanel.__S__.matrix3d);
 
 transport.onMessage(IEvents.progress, (data) => {
-  matrix2d.transform(
-    data.x, data.y, data.z,
+  const w = matrix3d.gl.canvas.width;
+  const h = matrix3d.gl.canvas.height;
+  matrix3d.transform(
+    data.x / 100 * w, data.y / 100 * h, data.z,
     data.anglex, data.angley, data.anglez,
     data.sx, data.sy, data.sz
   );
 });
-
-
-(window as any).matrix2d = matrix2d;
