@@ -95,16 +95,16 @@ class Panel extends Component<PanelProps, PanelState> {
     return (
       <Grid container>
         <Grid item xs={12}>
-          <Slider title="x" onChange={this.createChange('x')} show={setting.x} />
-          <Slider title="y" onChange={this.createChange('y')} show={setting.y} />
-          <Slider title="z" onChange={this.createChange('z')} show={setting.z} />
-          <Slider title="scaleX" onChange={this.createChange('sx')} show={setting.sx} />
-          <Slider title="scaleY" onChange={this.createChange('sy')} show={setting.sy} />
-          <Slider title="scaleZ" onChange={this.createChange('sz')} show={setting.sz} />
-          <Slider title="angle" onChange={this.createChange('angle')} show={setting.angle} />
-          <Slider title="angleX" onChange={this.createChange('anglex')} show={setting.anglex} />
-          <Slider title="angleY" onChange={this.createChange('angley')} show={setting.angley} />
-          <Slider title="angleZ" onChange={this.createChange('anglez')} show={setting.anglez} />
+          <Slider title="x" max={360} onChange={this.createChange('x')} show={setting.x} />
+          <Slider title="y" max={360} onChange={this.createChange('y')} show={setting.y} />
+          <Slider title="z" min={-360} max={360} onChange={this.createChange('z')} show={setting.z} />
+          <Slider title="scaleX" step={0.2} min={1} max={3} onChange={this.createChange('sx')} show={setting.sx} />
+          <Slider title="scaleY" step={0.2} min={1} max={3} onChange={this.createChange('sy')} show={setting.sy} />
+          <Slider title="scaleZ" step={0.2} min={1} max={3} onChange={this.createChange('sz')} show={setting.sz} />
+          <Slider title="angle" max={360} onChange={this.createChange('angle')} show={setting.angle} />
+          <Slider title="angleX" max={360} onChange={this.createChange('anglex')} show={setting.anglex} />
+          <Slider title="angleY" max={360} onChange={this.createChange('angley')} show={setting.angley} />
+          <Slider title="angleZ" max={360} onChange={this.createChange('anglez')} show={setting.anglez} />
         </Grid>
       </Grid>
     );

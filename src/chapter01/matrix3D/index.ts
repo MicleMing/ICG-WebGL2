@@ -26,6 +26,8 @@ class Matrix3D {
     this.program = createProgram(this.gl, vertexShader, fragmentShader);
     this.gl.useProgram(this.program);
     this.locations = this.vertexLocations(this.program);
+    this.gl.enable(this.gl.CULL_FACE);
+    this.gl.enable(this.gl.DEPTH_TEST);
 
     this.intitial();
   }
@@ -61,7 +63,7 @@ class Matrix3D {
   drawScence() {
     const gl = this.gl;
     gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
-    gl.clear(gl.COLOR_BUFFER_BIT);
+    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
     this.gm.shapeF();
 
     const offset = 0;
@@ -79,9 +81,9 @@ class Matrix3D {
     const { matrixLocation } = this.locations;
 
     const translateMatrix = m.translation(x, y, z);
-    const rotationXMatrix = m.rotationX(anglex * 3.6 * Math.PI / 180);
-    const rotationYMatrix = m.rotationY(angley * 3.6 * Math.PI / 180);
-    const rotationZMatrix = m.rotationZ(anglez * 3.6 * Math.PI / 180);
+    const rotationXMatrix = m.rotationX(anglex * Math.PI / 180);
+    const rotationYMatrix = m.rotationY(angley * Math.PI / 180);
+    const rotationZMatrix = m.rotationZ(anglez * Math.PI / 180);
     const scaleMatrix = m.scaling(sx, sy, sz);
 
     const pMatrix = m.projection(
@@ -108,10 +110,8 @@ const matrix3d = new Matrix3D();
 ConfigPanel(ConfigPanel.__S__.matrix3d);
 
 transport.onMessage(IEvents.progress, (data) => {
-  const w = matrix3d.gl.canvas.width;
-  const h = matrix3d.gl.canvas.height;
   matrix3d.transform(
-    data.x / 100 * w, data.y / 100 * h, data.z,
+    data.x, data.y, data.z,
     data.anglex, data.angley, data.anglez,
     data.sx, data.sy, data.sz
   );

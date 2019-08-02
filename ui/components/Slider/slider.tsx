@@ -52,6 +52,9 @@ interface SliderProps {
   title: string;
   disabled?: boolean;
   show: boolean;
+  max?: number;
+  min?: number;
+  step?: number;
   onChange: (event: Object, value: any) => void;
 }
 
@@ -66,6 +69,9 @@ export default function CustomizedSlider(props: SliderProps) {
       <Typography gutterBottom>{title}</Typography>
       <Slider
         ValueLabelComponent={ValueLabelComponent}
+        max={props.max}
+        min={props.min}
+        step={props.step}
         aria-label="custom thumb label"
         defaultValue={0}
         onChange={onChange}
