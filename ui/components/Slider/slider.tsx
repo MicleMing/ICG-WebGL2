@@ -55,6 +55,7 @@ interface SliderProps {
   max?: number;
   min?: number;
   step?: number;
+  defaultValue?: number;
   onChange: (event: Object, value: any) => void;
 }
 
@@ -73,7 +74,7 @@ export default function CustomizedSlider(props: SliderProps) {
         min={props.min}
         step={props.step}
         aria-label="custom thumb label"
-        defaultValue={0}
+        defaultValue={props.defaultValue || 0}
         onChange={onChange}
         disabled={disabled}
       />

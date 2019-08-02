@@ -8,6 +8,7 @@ interface PanelProps {
 }
 
 interface Values {
+  factor: number;
   x: number;
   y: number;
   z: number;
@@ -34,6 +35,7 @@ const settingMaps = {
     angle: true
   },
   [SETTINGS.matrix3d]: {
+    factor: true,
     x: true,
     y: true,
     z: true,
@@ -53,8 +55,9 @@ class Panel extends Component<PanelProps, PanelState> {
     this.state = {
       setting: {},
       values: {
-        x: 0,
-        y: 0,
+        factor: 1,
+        x: 200,
+        y: 160,
         z: 0,
         sx: 1,
         sy: 1,
@@ -95,8 +98,9 @@ class Panel extends Component<PanelProps, PanelState> {
     return (
       <Grid container>
         <Grid item xs={12}>
-          <Slider title="x" max={360} onChange={this.createChange('x')} show={setting.x} />
-          <Slider title="y" max={360} onChange={this.createChange('y')} show={setting.y} />
+          <Slider title="Factor" defaultValue={1} step={0.5} max={100} onChange={this.createChange('factor')} show={setting.factor} />
+          <Slider title="x" defaultValue={200} max={400} onChange={this.createChange('x')} show={setting.x} />
+          <Slider title="y" defaultValue={160} max={400} onChange={this.createChange('y')} show={setting.y} />
           <Slider title="z" min={-360} max={360} onChange={this.createChange('z')} show={setting.z} />
           <Slider title="scaleX" step={0.2} min={1} max={3} onChange={this.createChange('sx')} show={setting.sx} />
           <Slider title="scaleY" step={0.2} min={1} max={3} onChange={this.createChange('sy')} show={setting.sy} />

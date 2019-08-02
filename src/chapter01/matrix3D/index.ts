@@ -37,6 +37,7 @@ class Matrix3D {
     const positionLocation = gl.getAttribLocation(program, 'a_position');
     const colorLocation = gl.getAttribLocation(program, 'a_color');
     const matrixLocation = gl.getUniformLocation(program, 'u_matrix');
+    const factorLocation = gl.getUniformLocation(program, 'u_fudgeFactor');
 
     const colorBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
@@ -52,11 +53,13 @@ class Matrix3D {
     gl.enableVertexAttribArray(positionLocation);
 
     gl.uniformMatrix4fv(matrixLocation, false, m.identify());
+    gl.uniform1f(factorLocation, 1);
 
     return {
       positionLocation,
       colorLocation,
       matrixLocation,
+      factorLocation
     }
   }
 
@@ -72,6 +75,11 @@ class Matrix3D {
     gl.drawArrays(this.gl.TRIANGLES, offset, count);
   }
 
+  updateFudgeFactor(factor: number) {
+    const { factorLocation } = this.locations;
+    this.gl.uniform1f(factorLocation, factor);
+
+  }
   transform(
     x: number, y: number, z: number,
     anglex: number, angley: number, anglez: number,
@@ -101,7 +109,7 @@ class Matrix3D {
   }
 
   intitial() {
-    this.transform(0, 0, 0, 0, 0, 0, 1, 1, 1);
+    this.transform(200, 160, 0, 0, 0, 0, 1, 1, 1);
   }
 }
 
@@ -110,6 +118,7 @@ const matrix3d = new Matrix3D();
 ConfigPanel(ConfigPanel.__S__.matrix3d);
 
 transport.onMessage(IEvents.progress, (data) => {
+  matrix3d.updateFudgeFactor(data.factor);
   matrix3d.transform(
     data.x, data.y, data.z,
     data.anglex, data.angley, data.anglez,
