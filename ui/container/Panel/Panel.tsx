@@ -1,14 +1,17 @@
 import React, { Component } from 'react';
 import Grid from '@material-ui/core/Grid';
 import Slider from '../../components/Slider';
+import Select from '../../components/Select';
 import transport, { IEvents, SETTINGS } from '../../transport';
+
+import { selectItems } from './constant';
 
 interface PanelProps {
 
 }
 
 interface Values {
-  factor: number;
+  viewInRadians: number;
   x: number;
   y: number;
   z: number;
@@ -19,6 +22,7 @@ interface Values {
   anglex: number,
   angley: number,
   anglez: number,
+  select: string,
 }
 
 interface PanelState {
@@ -35,7 +39,7 @@ const settingMaps = {
     angle: true
   },
   [SETTINGS.matrix3d]: {
-    factor: true,
+    viewInRadians: true,
     x: true,
     y: true,
     z: true,
@@ -46,6 +50,9 @@ const settingMaps = {
     angley: true,
     anglez: true,
   },
+  [SETTINGS.image2d]: {
+    select: 'normal',
+  }
 }
 
 class Panel extends Component<PanelProps, PanelState> {
@@ -55,17 +62,18 @@ class Panel extends Component<PanelProps, PanelState> {
     this.state = {
       setting: {},
       values: {
-        factor: 1,
+        viewInRadians: 30,
         x: 200,
         y: 160,
-        z: 0,
+        z: -500,
         sx: 1,
         sy: 1,
         sz: 1,
         angle: 0,
         anglex: 0,
         angley: 0,
-        anglez: 0
+        anglez: 0,
+        select: '',
       }
     };
     transport.setPort(window.parent);
@@ -74,7 +82,7 @@ class Panel extends Component<PanelProps, PanelState> {
 
   componentDidMount() {
     transport.onMessage(IEvents.setting, (data) => {
-      // console.log('===', data)
+      console.log('setting: ', data)
       const setting = settingMaps[data];
       this.setState({ setting });
     })
@@ -98,10 +106,18 @@ class Panel extends Component<PanelProps, PanelState> {
     return (
       <Grid container>
         <Grid item xs={12}>
-          <Slider title="Factor" defaultValue={1} step={0.5} max={100} onChange={this.createChange('factor')} show={setting.factor} />
+          <Select
+            label="kenel"
+            onSelect={this.createChange('select')}
+            show={setting.select}
+            items={selectItems}
+          />
+        </Grid>
+        <Grid item xs={12}>
+          <Slider title="viewInRadians" defaultValue={30} step={0.1} max={180} onChange={this.createChange('viewInRadians')} show={setting.viewInRadians} />
           <Slider title="x" defaultValue={200} max={400} onChange={this.createChange('x')} show={setting.x} />
           <Slider title="y" defaultValue={160} max={400} onChange={this.createChange('y')} show={setting.y} />
-          <Slider title="z" min={-360} max={360} onChange={this.createChange('z')} show={setting.z} />
+          <Slider title="z" defaultValue={-500} min={-1000} max={1} onChange={this.createChange('z')} show={setting.z} />
           <Slider title="scaleX" step={0.2} min={1} max={3} onChange={this.createChange('sx')} show={setting.sx} />
           <Slider title="scaleY" step={0.2} min={1} max={3} onChange={this.createChange('sy')} show={setting.sy} />
           <Slider title="scaleZ" step={0.2} min={1} max={3} onChange={this.createChange('sz')} show={setting.sz} />

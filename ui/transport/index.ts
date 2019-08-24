@@ -14,6 +14,7 @@ export enum IEvents {
 }
 
 export enum SETTINGS {
+  image2d = 'image2d',
   matrix2d = 'matrix2d',
   matrix3d = 'matrix3d',
 }

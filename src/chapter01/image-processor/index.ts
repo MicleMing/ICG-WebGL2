@@ -5,6 +5,8 @@ import vertexShader from './shader.vert';
 import fragmentShader from './shader.frag';
 import kenels from './kernels';
 
+import { transport, IEvents, ConfigPanel } from '../../config';
+
 function computeKernelWeight(kernel: number[]): number {
   const weight = kernel.reduce((prev, curr) => {
     return prev + curr;
@@ -181,13 +183,17 @@ class ImageProcessor {
     const count = 6;
     gl.drawArrays(primitiveType, offset, count);
 
-    this.applyKernel('edgeDetect');
-    this.applyKernel('emboss');
+    this.applyKernel('normal');
   }
 }
 
 const imageProcessor = new ImageProcessor();
 
-imageProcessor.loadImage('http://127.0.0.1:5500/dist/image-processor/images/foo.png');
+imageProcessor.loadImage('http://127.0.0.1:5500/dist/image-processor/images/foo.jpg');
 
-(window as any).imageProcessor = imageProcessor;
+ConfigPanel(ConfigPanel.__S__.image2d);
+transport.onMessage(IEvents.progress, (data) => {
+  console.log(data);
+  const kenel = data.select;
+  imageProcessor.applyKernel(kenel);
+});

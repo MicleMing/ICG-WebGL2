@@ -1,5 +1,5 @@
 import { initWebGL, createProgram } from '../../shared';
-import Geometry, { GShape } from './geometry';
+import Geometry from './geometry';
 import * as m from './matrix';
 import { mat4 } from 'gl-matrix';
 import vertexShader from './shader.vert';
@@ -37,7 +37,6 @@ class Matrix3D {
     const positionLocation = gl.getAttribLocation(program, 'a_position');
     const colorLocation = gl.getAttribLocation(program, 'a_color');
     const matrixLocation = gl.getUniformLocation(program, 'u_matrix');
-    const factorLocation = gl.getUniformLocation(program, 'u_fudgeFactor');
 
     const colorBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
@@ -53,13 +52,11 @@ class Matrix3D {
     gl.enableVertexAttribArray(positionLocation);
 
     gl.uniformMatrix4fv(matrixLocation, false, m.identify());
-    gl.uniform1f(factorLocation, 1);
 
     return {
       positionLocation,
       colorLocation,
       matrixLocation,
-      factorLocation
     }
   }
 
@@ -75,19 +72,18 @@ class Matrix3D {
     gl.drawArrays(this.gl.TRIANGLES, offset, count);
   }
 
-  updateFudgeFactor(factor: number) {
-    const { factorLocation } = this.locations;
-    this.gl.uniform1f(factorLocation, factor);
-
-  }
   transform(
     x: number, y: number, z: number,
     anglex: number, angley: number, anglez: number,
-    sx: number, sy: number, sz: number
+    sx: number, sy: number, sz: number,
+    viewInRadians: number,
   ) {
     const gl = this.gl;
+    const aspect = gl.canvas.clientWidth / gl.canvas.clientHeight;
+    const zNear = 1;
+    const zFar = 2000;
     const { matrixLocation } = this.locations;
-
+    const perspectMatrix = m.perspective(viewInRadians, aspect, zNear, zFar);
     const translateMatrix = m.translation(x, y, z);
     const rotationXMatrix = m.rotationX(anglex * Math.PI / 180);
     const rotationYMatrix = m.rotationY(angley * Math.PI / 180);
@@ -99,17 +95,18 @@ class Matrix3D {
       this.gl.canvas.clientHeight,
       400
     );
-    const matrix0 = mat4.multiply(mat4.create(), pMatrix, translateMatrix);
-    const matrix1 = mat4.multiply(mat4.create(), matrix0, rotationXMatrix);
-    const matrix2 = mat4.multiply(mat4.create(), matrix1, rotationYMatrix);
-    const matrix3 = mat4.multiply(mat4.create(), matrix2, rotationZMatrix);
-    const matrix4 = mat4.multiply(mat4.create(), matrix3, scaleMatrix);
-    gl.uniformMatrix4fv(matrixLocation, false, matrix4);
+    const matrix0 = mat4.multiply(mat4.create(), perspectMatrix, pMatrix);
+    const matrix1 = mat4.multiply(mat4.create(), matrix0, translateMatrix);
+    const matrix2 = mat4.multiply(mat4.create(), matrix1, rotationXMatrix);
+    const matrix3 = mat4.multiply(mat4.create(), matrix2, rotationYMatrix);
+    const matrix4 = mat4.multiply(mat4.create(), matrix3, rotationZMatrix);
+    const matrix5 = mat4.multiply(mat4.create(), matrix4, scaleMatrix);
+    gl.uniformMatrix4fv(matrixLocation, false, matrix5);
     this.drawScence();
   }
 
   intitial() {
-    this.transform(200, 160, 0, 0, 0, 0, 1, 1, 1);
+    this.transform(200, 160, -500, 0, 0, 0, 1, 1, 1, 30);
   }
 }
 
@@ -118,10 +115,11 @@ const matrix3d = new Matrix3D();
 ConfigPanel(ConfigPanel.__S__.matrix3d);
 
 transport.onMessage(IEvents.progress, (data) => {
-  matrix3d.updateFudgeFactor(data.factor);
+  console.log(data);
   matrix3d.transform(
     data.x, data.y, data.z,
     data.anglex, data.angley, data.anglez,
-    data.sx, data.sy, data.sz
+    data.sx, data.sy, data.sz,
+    data.viewInRadians
   );
 });
