@@ -7,21 +7,25 @@
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>Matrix 2D</title>
   <style>
-    #gl-canvas {
-      border: 1px solid;
-    }
-
     iframe {
       position: fixed;
-      right: 0;
+      right: 100px;
+      top: 24px;
       border: none;
       height: 100%;
+    }
+
+    canvas {
+      width: 800px;
+      height: 600px;
+      margin: 24px 60px;
+      border: 1px solid #cccccc;
     }
   </style>
 </head>
 
 <body>
-  <canvas id="gl-canvas" width="512" height="512"></canvas>
+  <canvas id="gl-canvas" width="800" height="600"></canvas>
   <iframe src="../ui"></iframe>
   <script src="./index.js"></script>
 </body>

@@ -8,14 +8,6 @@ export const selectItems = [
     value: 'gaussianBlur',
   },
   {
-    name: 'gaussianBlur2',
-    value: 'gaussianBlur2',
-  },
-  {
-    name: 'gaussianBlur3',
-    value: 'gaussianBlur3',
-  },
-  {
     name: 'unsharpen',
     value: 'unsharpen',
   },
@@ -46,10 +38,6 @@ export const selectItems = [
   {
     name: 'boxBlur',
     value: 'boxBlur',
-  },
-  {
-    name: 'triangleBlur',
-    value: 'triangleBlur',
   },
   {
     name: 'emboss',

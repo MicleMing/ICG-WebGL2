@@ -173,7 +173,6 @@ class ImageProcessor {
     this.createTexture(gl);
     gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);
 
-
     gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
     gl.clearColor(0, 0, 0, 0);
     gl.clear(gl.COLOR_BUFFER_BIT);
@@ -189,7 +188,7 @@ class ImageProcessor {
 
 const imageProcessor = new ImageProcessor();
 
-imageProcessor.loadImage('http://127.0.0.1:5500/dist/image-processor/images/foo.jpg');
+imageProcessor.loadImage('http://127.0.0.1:5500/dist/image-processor/images/foo.png');
 
 ConfigPanel(ConfigPanel.__S__.image2d);
 transport.onMessage(IEvents.progress, (data) => {
