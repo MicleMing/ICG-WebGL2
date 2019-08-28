@@ -7,7 +7,7 @@
   "scripts": {
     "chapter01": "webpack --watch --mode=development --env=chapter01",
     "chapter02": "webpack --watch --mode=development --env=chapter02",
-    "build": "webpack --mode=development",
+    "build": "node ./script/build.js",
     "ui": "webpack --watch --mode=development --config ./webpack.ui.config.js"
   },
   "dependencies": {

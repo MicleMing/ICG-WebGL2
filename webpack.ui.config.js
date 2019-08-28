@@ -7,7 +7,7 @@ module.exports = env => ({
   },
   output: {
     filename: "ui/[name].js",
-    path: path.resolve(__dirname, "./dist")
+    path: path.resolve(__dirname, "./docs")
   },
 
   devtool: "source-map",

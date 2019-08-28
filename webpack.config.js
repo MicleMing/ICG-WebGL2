@@ -26,14 +26,11 @@ module.exports = env => {
   const copyHtml = copyAssets('index.html');
   const copyImages = copyAssets('images', 'images');
 
-
-
-  console.log(copyHtml)
   return {
     entry: entry,
     output: {
       filename: "[name]/index.js",
-      path: path.resolve(__dirname, "./dist")
+      path: path.resolve(__dirname, `./docs/${env}`)
     },
 
     devtool: "source-map",

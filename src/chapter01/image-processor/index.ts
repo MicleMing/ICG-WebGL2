@@ -188,7 +188,7 @@ class ImageProcessor {
 
 const imageProcessor = new ImageProcessor();
 
-imageProcessor.loadImage('http://127.0.0.1:5500/dist/image-processor/images/foo.png');
+imageProcessor.loadImage('./images/foo.png');
 
 ConfigPanel(ConfigPanel.__S__.image2d);
 transport.onMessage(IEvents.progress, (data) => {
