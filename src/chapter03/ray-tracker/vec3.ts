@@ -1,11 +1,12 @@
 export type vec3 = [number, number, number];
 
-const checkVec3 = (v) => {
-  return Object.prototype.toString.call(v) === '[object Array]' && v.length === 3;
+const checkVec3 = v => {
+  return (
+    Object.prototype.toString.call(v) === "[object Array]" && v.length === 3
+  );
 };
 
 export class Vec3 {
-
   static x = (v: vec3) => v[0];
   static y = (v: vec3) => v[1];
   static z = (v: vec3) => v[2];
@@ -19,7 +20,7 @@ export class Vec3 {
     v[1] = v1 ? v1 : 0;
     v[2] = v2 ? v2 : 0;
     return v;
-  };
+  }
 
   static multiply(a: vec3, t: number): vec3;
   static multiply(a: vec3, b: vec3): vec3;
@@ -38,6 +39,14 @@ export class Vec3 {
     out[0] = a[0] + b[0];
     out[1] = a[1] + b[1];
     out[2] = a[2] + b[2];
+    return out;
+  }
+
+  static substract(a: vec3, b: vec3) {
+    const out = Vec3.create();
+    out[0] = a[0] - b[0];
+    out[1] = a[1] - b[1];
+    out[2] = a[2] - b[2];
     return out;
   }
 
@@ -69,5 +78,4 @@ export class Vec3 {
   static unit_vector(v: vec3): vec3 {
     return Vec3.devide(v, Vec3.len(v));
   }
-};
-
+}

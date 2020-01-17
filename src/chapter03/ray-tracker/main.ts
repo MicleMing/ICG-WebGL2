@@ -13,6 +13,9 @@ if (exist) {
 const stream = fs.createWriteStream(fileName);
 
 function color(ray: Ray): vec3 {
+  if (hit_sphere(Vec3.create(0, 0, -1), 0.5, ray)) {
+    return Vec3.create(1, 0, 0);
+  }
   // unit vector(a) = A / |A|
   const unit_direction: vec3 = Vec3.unit_vector(ray.direction());
   const t = 0.5 * (Vec3.y(unit_direction) + 1);
@@ -22,6 +25,16 @@ function color(ray: Ray): vec3 {
     Vec3.multiply([1.0, 1.0, 1.0], 1.0 - t),
     Vec3.multiply([0.5, 0.7, 1.0], t)
   );
+}
+
+function hit_sphere(center: vec3, radius: number, r: Ray) {
+  // 𝑡2⋅𝑑𝑜𝑡(𝐵,𝐵)+2𝑡⋅𝑑𝑜𝑡(𝐵,𝐴−𝐶)+𝑑𝑜𝑡(𝐴−𝐶,𝐴−𝐶)−𝑅2=0
+  const oc: vec3 = Vec3.substract(r.origin(), center);
+  const a = Vec3.dot(r.direction(), r.direction());
+  const b = 2 * Vec3.dot(oc, r.direction());
+  const c = Vec3.dot(oc, oc) - radius * radius;
+  const discriminant = b * b - 4 * a * c;
+  return discriminant > 0;
 }
 
 function main() {
