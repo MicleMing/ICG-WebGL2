@@ -13,12 +13,22 @@ if (exist) {
 const stream = fs.createWriteStream(fileName);
 
 function color(ray: Ray): vec3 {
-  if (hit_sphere(Vec3.create(0, 0, -1), 0.5, ray)) {
-    return Vec3.create(1, 0, 0);
+  let t = hit_sphere(Vec3.create(0, 0, -1), 0.5, ray);
+  // hited
+  if (t > 0) {
+    // N = P - C
+    const N: vec3 = Vec3.unit_vector(
+      Vec3.substract(ray.point_at_parameter(t), Vec3.create(0, 0, -1))
+    );
+    // Map (-1, 1) => (0, 1)
+    return Vec3.multiply(
+      Vec3.create(Vec3.x(N) + 1, Vec3.y(N) + 1, Vec3.z(N) + 1),
+      0.5
+    );
   }
   // unit vector(a) = A / |A|
   const unit_direction: vec3 = Vec3.unit_vector(ray.direction());
-  const t = 0.5 * (Vec3.y(unit_direction) + 1);
+  t = 0.5 * (Vec3.y(unit_direction) + 1);
   // 𝑏𝑙𝑒𝑛𝑑𝑒𝑑𝑉𝑎𝑙𝑢𝑒=(1−𝑡)∗𝑠𝑡𝑎𝑟𝑡𝑉𝑎𝑙𝑢𝑒+𝑡∗𝑒𝑛𝑑𝑉𝑎𝑙𝑢𝑒,
   // when t = 1.0 => blue, when t = 0 => white
   return Vec3.add(
@@ -34,7 +44,10 @@ function hit_sphere(center: vec3, radius: number, r: Ray) {
   const b = 2 * Vec3.dot(oc, r.direction());
   const c = Vec3.dot(oc, oc) - radius * radius;
   const discriminant = b * b - 4 * a * c;
-  return discriminant > 0;
+  if (discriminant < 0) {
+    return -1;
+  }
+  return (-b - Math.sqrt(discriminant)) / (2 * a);
 }
 
 function main() {
