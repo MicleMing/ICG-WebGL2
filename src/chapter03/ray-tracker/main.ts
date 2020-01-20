@@ -4,6 +4,7 @@ import { Ray } from "./ray";
 import { hittable, hit_record } from "./hittable";
 import { Sphere } from "./sphere";
 import { Hittable_list } from "./hittable_list";
+import { Camera } from "./camera";
 
 const fileName = "ray.ppm";
 
@@ -42,6 +43,7 @@ function color(ray: Ray, world: hittable) {
 function main() {
   const nx = 200;
   const ny = 100;
+  const ns = 100;
   stream.write("P3\n");
   stream.write(`${nx} ${ny}\n`);
   stream.write("255\n");
@@ -50,6 +52,13 @@ function main() {
   const horizontal = Vec3.create(4.0, 0.0, 0.0);
   const vertical = Vec3.create(0.0, 2.0, 0.0);
   const origin = Vec3.create(0.0, 0.0, 0.0);
+
+  const cam: Camera = new Camera(
+    lower_left_corner,
+    horizontal,
+    vertical,
+    origin
+  );
 
   const list: hittable[] = [
     new Sphere({ center: Vec3.create(0, 0, -1), radius: 0.5 }),
@@ -60,18 +69,15 @@ function main() {
 
   for (let j = ny - 1; j >= 0; j--) {
     for (let i = 0; i < nx; i++) {
-      const u = i / nx;
-      const v = j / ny;
-      const r = new Ray(
-        origin,
-        // direction: lower_left_corner + u*horizontal + v*vertical
-        Vec3.add(
-          Vec3.add(lower_left_corner, Vec3.multiply(horizontal, u)),
-          Vec3.multiply(vertical, v)
-        )
-      );
-      // const p: vec3 = r.point_at_parameter(2);
-      const col: vec3 = color(r, world);
+      let col = Vec3.create();
+      for (let s = 0; s < ns; s++) {
+        const u = (i + Math.random()) / nx;
+        const v = (j + Math.random()) / ny;
+        const r = cam.get_ray(u, v);
+        col = Vec3.add(col, color(r, world));
+      }
+      col = Vec3.devide(col, ns);
+
       const ir = Math.floor(255.99 * col[0]);
       const ig = Math.floor(255.99 * col[1]);
       const ib = Math.floor(255.99 * col[2]);
