@@ -78,4 +78,12 @@ export class Vec3 {
   static unit_vector(v: vec3): vec3 {
     return Vec3.devide(v, Vec3.len(v));
   }
+
+  static squard_length(v: vec3): number {
+    return v[0] * v[0] + v[1] * v[1] + v[2] * v[2];
+  }
+
+  static square(v: vec3): vec3 {
+    return Vec3.create(Math.sqrt(v[0]), Math.sqrt(v[1]), Math.sqrt(v[2]));
+  }
 }

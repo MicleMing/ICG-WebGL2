@@ -16,16 +16,33 @@ if (exist) {
 
 const stream = fs.createWriteStream(fileName);
 
+function random_in_unit_sphere(): vec3 {
+  let p: vec3;
+  do {
+    p = Vec3.substract(
+      Vec3.multiply(
+        Vec3.create(Math.random(), Math.random(), Math.random()),
+        2
+      ),
+      Vec3.create(1, 1, 1)
+    );
+  } while (Vec3.squard_length(p) >= 1);
+  return p;
+}
+
 function color(ray: Ray, world: hittable) {
   let rec: hit_record = {
     t: 0,
     p: Vec3.create(),
     normal: Vec3.create()
   };
-  if (world.hit(ray, 0, 10000000, rec)) {
-    const N = rec.normal;
+  if (world.hit(ray, 0.001, 10000000, rec)) {
+    const target = Vec3.add(
+      Vec3.add(rec.p, rec.normal),
+      random_in_unit_sphere()
+    );
     return Vec3.multiply(
-      Vec3.create(Vec3.x(N) + 1, Vec3.y(N) + 1, Vec3.z(N) + 1),
+      color(new Ray(rec.p, Vec3.substract(target, rec.p)), world),
       0.5
     );
   }
@@ -76,8 +93,7 @@ function main() {
         const r = cam.get_ray(u, v);
         col = Vec3.add(col, color(r, world));
       }
-      col = Vec3.devide(col, ns);
-
+      col = Vec3.square(Vec3.devide(col, ns));
       const ir = Math.floor(255.99 * col[0]);
       const ig = Math.floor(255.99 * col[1]);
       const ib = Math.floor(255.99 * col[2]);
