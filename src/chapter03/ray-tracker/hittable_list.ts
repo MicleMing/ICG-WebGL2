@@ -1,6 +1,7 @@
 import { Vec3, vec3 } from "./vec3";
 import { hittable, hit_record } from "./hittable";
 import { Ray } from "./ray";
+import { lambertian } from "./lambertian";
 
 type Props = {
   l: hittable[];
@@ -19,7 +20,8 @@ export class Hittable_list implements hittable {
     let temp_rec: hit_record = {
       t: 0,
       p: Vec3.create(),
-      normal: Vec3.create()
+      normal: Vec3.create(),
+      mat_ptr: new lambertian([0, 0, 0])
     };
     let hit_anything = false;
     let closest_so_far = t_max;
@@ -30,6 +32,7 @@ export class Hittable_list implements hittable {
         rec.normal = temp_rec.normal;
         rec.p = temp_rec.p;
         rec.t = temp_rec.t;
+        rec.mat_ptr = temp_rec.mat_ptr;
       }
     }
     return hit_anything;
