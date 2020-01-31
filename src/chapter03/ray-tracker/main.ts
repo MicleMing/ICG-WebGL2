@@ -66,17 +66,7 @@ function main() {
   stream.write(`${nx} ${ny}\n`);
   stream.write("255\n");
 
-  const lower_left_corner = Vec3.create(-2.0, -1.0, -1.0);
-  const horizontal = Vec3.create(4.0, 0.0, 0.0);
-  const vertical = Vec3.create(0.0, 2.0, 0.0);
-  const origin = Vec3.create(0.0, 0.0, 0.0);
-
-  const cam: Camera = new Camera(
-    lower_left_corner,
-    horizontal,
-    vertical,
-    origin
-  );
+  const cam: Camera = new Camera(Vec3.create(-2, 2, 1), Vec3.create(0, 0, -1), Vec3.create(0, 1, 0), 30, nx / ny);
 
   const list: hittable[] = [
     new Sphere({
@@ -94,11 +84,11 @@ function main() {
       radius: 0.5,
       m: new metal([0.8, 0.6, 0.2], 0.3)
     }),
-    new Sphere({
-      center: Vec3.create(-1, 0, -1),
-      radius: 0.5,
-      m: new dielectric(1.3)
-    }),
+    // new Sphere({
+    //   center: Vec3.create(-1, 0, -1),
+    //   radius: 0.5,
+    //   m: new dielectric(1.3)
+    // }),
     // new Sphere({
     //   center: Vec3.create(-1, 0, -1),
     //   radius: -0.45,

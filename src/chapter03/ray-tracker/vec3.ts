@@ -86,4 +86,12 @@ export class Vec3 {
   static square(v: vec3): vec3 {
     return Vec3.create(Math.sqrt(v[0]), Math.sqrt(v[1]), Math.sqrt(v[2]));
   }
+
+  static cross(v1: vec3, v2: vec3): vec3 {
+    //find normal vecter
+    const e1 = v1[1] * v2[2] - v1[2] * v2[1];
+    const e2 = v1[2] * v2[0] - v1[0] * v2[2];
+    const e3 = v1[0] * v2[1] - v1[1] * v2[0];
+    return Vec3.create(e1, e2, e3);
+  }
 }
