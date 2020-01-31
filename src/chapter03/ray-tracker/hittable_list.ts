@@ -5,7 +5,6 @@ import { lambertian } from "./lambertian";
 
 type Props = {
   l: hittable[];
-  n: number;
 };
 
 export class Hittable_list implements hittable {
@@ -13,7 +12,7 @@ export class Hittable_list implements hittable {
   list_size: number;
   constructor(props: Props) {
     this.list = props.l;
-    this.list_size = props.n;
+    this.list_size = this.list.length;
   }
 
   hit(r: Ray, t_min: number, t_max: number, rec: hit_record) {

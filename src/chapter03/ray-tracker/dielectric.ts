@@ -3,7 +3,6 @@ import { material } from "./material";
 import { reflect } from './metal';
 import { Ray } from "./ray";
 import { hit_record } from "./hittable";
-import { random_in_unit_sphere } from "./random";
 
 // https://blog.csdn.net/puppet_master/article/details/81144266
 function refract(v: vec3, n: vec3, ni_over_nt: number): boolean | vec3 {
@@ -26,6 +25,12 @@ function refract(v: vec3, n: vec3, ni_over_nt: number): boolean | vec3 {
   return false;
 }
 
+function schlick(cosine: number, ref_idx: number): number {
+  let r0 = (1 - ref_idx) / (1 + ref_idx);
+  r0 = r0 * r0;
+  return r0 + (1 - r0) * Math.pow((1 - cosine), 5);
+}
+
 export class dielectric implements material {
   ref_idx: number;
   constructor(ri: number) {
@@ -38,23 +43,34 @@ export class dielectric implements material {
     attenuationBox: { attenuation: vec3 },
     scatteredBox: { scattered: Ray }
   ) {
+    const ref_idx = this.ref_idx;
     let outward_normal: vec3;
     const reflected = reflect(r_in.direction(), rec.normal);
     let ni_over_nt;
     attenuationBox.attenuation = Vec3.create(1, 1, 1);
+
+    let reflect_prob: number;
+    let cosine: number;
+
     if (Vec3.dot(r_in.direction(), rec.normal) > 0) {
       outward_normal = Vec3.multiply(rec.normal, -1);
-      ni_over_nt = this.ref_idx;
+      ni_over_nt = ref_idx;
+      cosine = ref_idx * Vec3.dot(Vec3.unit_vector(r_in.direction()), rec.normal);
     } else {
       outward_normal = rec.normal;
-      ni_over_nt = 1 / this.ref_idx;
+      ni_over_nt = 1 / ref_idx;
+      cosine = -1 * Vec3.dot(Vec3.unit_vector(r_in.direction()), rec.normal);
     }
     let refracted = refract(r_in.direction(), outward_normal, ni_over_nt);
-    if (reflected) {
-      scatteredBox.scattered = new Ray(rec.p, (refracted as vec3))
+    if (refracted) {
+      reflect_prob = schlick(cosine, ref_idx);
     } else {
+      reflect_prob = 1;
+    }
+    if (Math.random() < reflect_prob) {
       scatteredBox.scattered = new Ray(rec.p, reflected);
-      return false;
+    } else {
+      scatteredBox.scattered = new Ray(rec.p, (refracted as vec3))
     }
     return true;
   }

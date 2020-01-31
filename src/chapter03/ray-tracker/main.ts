@@ -97,16 +97,16 @@ function main() {
     new Sphere({
       center: Vec3.create(-1, 0, -1),
       radius: 0.5,
-      m: new dielectric(1.5)
+      m: new dielectric(1.3)
     }),
-    new Sphere({
-      center: Vec3.create(-1, 0, -1),
-      radius: -0.45,
-      m: new dielectric(1.5)
-    })
+    // new Sphere({
+    //   center: Vec3.create(-1, 0, -1),
+    //   radius: -0.45,
+    //   m: new dielectric(1.5)
+    // })
   ];
 
-  const world: hittable = new Hittable_list({ l: list, n: 4 });
+  const world: hittable = new Hittable_list({ l: list });
 
   for (let j = ny - 1; j >= 0; j--) {
     for (let i = 0; i < nx; i++) {
