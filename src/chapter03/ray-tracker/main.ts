@@ -66,7 +66,11 @@ function main() {
   stream.write(`${nx} ${ny}\n`);
   stream.write("255\n");
 
-  const cam: Camera = new Camera(Vec3.create(-2, 2, 1), Vec3.create(0, 0, -1), Vec3.create(0, 1, 0), 30, nx / ny);
+  const lookfrom = Vec3.create(3, 3, 2);
+  const lookat = Vec3.create(0, 0, -1);
+  const dist_to_focus = Vec3.len(Vec3.substract(lookfrom, lookat));
+  const aperture = 2;
+  const cam: Camera = new Camera(lookfrom, lookat, Vec3.create(0, 1, 0), 30, nx / ny, aperture, dist_to_focus);
 
   const list: hittable[] = [
     new Sphere({
