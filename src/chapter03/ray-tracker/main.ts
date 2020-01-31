@@ -7,6 +7,7 @@ import { Hittable_list } from "./hittable_list";
 import { Camera } from "./camera";
 import { lambertian } from "./lambertian";
 import { metal } from "./metal";
+import { dielectric } from "./dielectric";
 
 const fileName = "ray.ppm";
 
@@ -81,7 +82,7 @@ function main() {
     new Sphere({
       center: Vec3.create(0, 0, -1),
       radius: 0.5,
-      m: new lambertian([0.8, 0.3, 0.3])
+      m: new lambertian([0.1, 0.2, 0.5])
     }),
     new Sphere({
       center: Vec3.create(0, -100.5, -1),
@@ -91,12 +92,17 @@ function main() {
     new Sphere({
       center: Vec3.create(1, 0, -1),
       radius: 0.5,
-      m: new metal([0.8, 0.8, 0.2], 0.5)
+      m: new metal([0.8, 0.6, 0.2], 0.3)
     }),
     new Sphere({
       center: Vec3.create(-1, 0, -1),
       radius: 0.5,
-      m: new metal([0.8, 0.8, 0.8], 0.3)
+      m: new dielectric(1.5)
+    }),
+    new Sphere({
+      center: Vec3.create(-1, 0, -1),
+      radius: -0.45,
+      m: new dielectric(1.5)
     })
   ];
 

@@ -5,7 +5,7 @@ import { hit_record } from "./hittable";
 
 import { random_in_unit_sphere } from "./random";
 
-function reflect(v: vec3, n: vec3) {
+export function reflect(v: vec3, n: vec3) {
   return Vec3.substract(v, Vec3.multiply(n, 2 * Vec3.dot(v, n)));
 }
 
